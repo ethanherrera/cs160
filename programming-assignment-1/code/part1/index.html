@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <title></title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- You can find other web fonts at https://fonts.google.com/ ! -->
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      body {
+        font-family: "Lato", sans-serif;
+        margin: 0;
+        padding: 0;
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      header {
+        padding: 10px;
+      }
+
+      main {
+        width: 960px;
+      }
+
+      /* Add plenty of styles below. You can change any of the above, as well! */
+    </style>
+  </head>
+  <body>
+    <header>
+      <h1>Currency Converter</h1>
+    </header>
+    <main>
+      <!-- Add your HTML code here! -->
+
+      <!--
+        You can use radio buttons to allow the user to select the currency they want to
+        convert from; the browser will automatically only allow one button to be selected
+        at once.
+        You don't have to use radio buttons, but if you replace radio buttons, you'll want
+        some other mechanism for letting the user know which currency they've selected.
+
+          <input type="radio" name="currency" value="usd" id="usd-clickable">
+          <input type="radio" name="currency" value="eur" id="eur-clickable">
+
+        Notice that both radio buttons use the same value for the "name" attribute.
+        This is how the browser is able to ensure that only one radio button from this
+        group is selected at a time.
+        <input> is a "void" element, so there's no need to close it with </input>.
+
+        Avoid dropdowns (<select>) for this assignment, because the autograder won't be
+        able to find the options to click on.
+      -->
+
+      <!--
+        <input> takes other "type"s, not just radio. Using "text" shows a textbox, which
+        the user can type in:
+        
+          <input type="text" id="amount-textbox">
+      -->
+
+      <!--
+        Consider using the <button> element to create a button that the user can use to
+        calculate all of the values:
+        
+          <button id="calculate-clickable">Button text</button>
+          
+        You can style button elements with CSS to customize them quite a bit!
+      -->
+
+      <!--
+        You can display the results however you like. Consider using (and styling) a
+        table:
+
+          <table>
+            <thead>
+              <tr>
+                <th>USD</th>
+                <th>EUR</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td id="usd-calculated"></td>
+                <td id="eur-calculated"></td>
+              </tr>
+            </tbody>
+          </table>
+      -->
+
+      <!-- 
+        For the error message, a <span> or a <div> with the appropriate ID would work.
+        You might want to modify the JavaScript code below to show or hide the entire
+        element, rather than just changing the text.
+      -->
+
+      <!--
+        All of the above are just suggestions. Feel free to experiment with other
+        elements! You can add styles to anything you add above using CSS in the
+        <style> tag up at the top of the file.
+      -->
+    </main>
+
+    <script>
+      const EUR_PER_USD = 0.93;
+
+      // This code grabs the element above with the id "calculate-clickable". This could
+      // be a button or any other kind of element.
+      const calculateClickable = document.getElementById("calculate-clickable");
+
+      calculateClickable.addEventListener("click", () => {
+        // The code in this block runs when the element above is clicked.
+
+        // Now, let's grab the textbox using the required ID:
+        const amountTextbox = document.getElementById("amount-textbox");
+
+        // We can get the '.value' attribute of an <input> element; in this case, since it's
+        // a textbox, it'll just return the text that the user typed in.
+        const amount = amountTextbox.value;
+
+        // To convert to a number, we can use the 'parseFloat' function.
+        const amountAsNumber = parseFloat(amount);
+
+        // Write some code to make sure the amount is positive.
+        // If it's not, set the content of the error message element:
+        document.getElementById("error-message").textContent = ""; // ...
+        // Consider also hiding or showing the element:
+        //   document.getElementById("error-message").style.display = "none";
+        //   document.getElementById("error-message").style.display = "block"; // or "inline", for a span
+
+        // You'll need to think about how you want to calculate the value for each currency.
+        // Make sure to take the "from" currency into account. You can tell if a radio button
+        // is checked using the '.checked' attribute in JavaScript, which is a boolean true/false value.
+
+        // Once you have the result, you can set the content of each element with the appropriate ID:
+        //  document.getElementById("usd-calculated").textContent = ...;
+        // If you want to include additional text (e.g. a € symbol), you can either include it here
+        // or add it in the HTML, outside of the element with the "usd-calculated" ID.
+        // To do this, you may want to use a <span> (rather than a <td>) for the "usd-calculated" element.
+      });
+    </script>
+  </body>
+</html>
