@@ -1,155 +1,377 @@
 <!DOCTYPE html>
-
 <html>
-  <head>
-    <title></title>
+<head>
+  <title>Currency Converter</title>
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+          href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+          rel="stylesheet"
+  />
 
-    <!-- You can find other web fonts at https://fonts.google.com/ ! -->
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --text-50: #eff6f4;
+      --text-100: #deede9;
+      --text-200: #bedad2;
+      --text-300: #9dc8bc;
+      --text-400: #7cb6a5;
+      --text-500: #5ca38f;
+      --text-600: #498372;
+      --text-700: #376256;
+      --text-800: #254139;
+      --text-900: #12211d;
+      --text-950: #09100e;
 
-    <style>
-      body {
-        font-family: "Lato", sans-serif;
-        margin: 0;
-        padding: 0;
+      --background-50: #edf7f5;
+      --background-100: #dbf0eb;
+      --background-200: #b8e0d6;
+      --background-300: #94d1c2;
+      --background-400: #70c2ad;
+      --background-500: #4db399;
+      --background-600: #3d8f7a;
+      --background-700: #2e6b5c;
+      --background-800: #1f473d;
+      --background-900: #0f241f;
+      --background-950: #08120f;
 
-        display: flex;
-        flex-direction: column;
-        align-items: center;
+      --primary-50: #ebf9f5;
+      --primary-100: #d8f3ea;
+      --primary-200: #b1e7d6;
+      --primary-300: #8adbc1;
+      --primary-400: #63cfad;
+      --primary-500: #3cc398;
+      --primary-600: #309c7a;
+      --primary-700: #24755b;
+      --primary-800: #184e3d;
+      --primary-900: #0c271e;
+      --primary-950: #06140f;
+
+      --secondary-50: #e9fbf5;
+      --secondary-100: #d4f7ec;
+      --secondary-200: #a9efd9;
+      --secondary-300: #7ee7c6;
+      --secondary-400: #53dfb3;
+      --secondary-500: #28d7a0;
+      --secondary-600: #20ac80;
+      --secondary-700: #188160;
+      --secondary-800: #105640;
+      --secondary-900: #082b20;
+      --secondary-950: #041610;
+
+      --accent-50: #e8fdf6;
+      --accent-100: #d0fbed;
+      --accent-200: #a2f6dc;
+      --accent-300: #73f2ca;
+      --accent-400: #44eeb8;
+      --accent-500: #16e9a6;
+      --accent-600: #11bb85;
+      --accent-700: #0d8c64;
+      --accent-800: #095d43;
+      --accent-900: #042f21;
+      --accent-950: #021711;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background-color: var(--background-950);
+    }
+
+    .calculator-container {
+      width: 80%;
+      height: 70%;
+      max-height: 800px;
+      max-width: 800px;
+      text-align: center;
+      padding: 100px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      background-color: var(--secondary-900);
+      padding-top: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      border-radius: 15px;
+    }
+
+    .title {
+      margin-bottom: 30px;
+      color: var(--text-50);
+      background-color: var(--primary-700);
+      border-radius: 15px;
+      width: 50%;
+      padding: 6px;
+    }
+
+    h3 {
+      color: var(--text-50);
+    }
+
+    .conversion-container {
+      display: flex;
+      align-items: center;
+      justify-content: space-evenly;
+      gap: 8px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+    }
+
+    .radio-group {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      background-color: var(--background-200);
+      padding: 10px;
+      border-radius: 10px;
+      color: var(--text-900);
+      width: 300px;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.9rem;
+    }
+
+    .radio-option {
+      margin: 3px 0;
+    }
+
+    .radio-option input[type="radio"] {
+      transform: scale(0.8);
+      margin-right: 4px;
+    }
+
+    .radio-group label {
+      margin-left: 0;
+      margin-right: 10px;
+    }
+
+    .input-container {
+      display: flex;
+      justify-content: space-evenly;
+      gap: 10px;
+    }
+
+    #amount-textbox { /* renamed from 'from-amount' */
+      width: 200px;
+      padding: 8px;
+    }
+
+    #to-amount {
+      width: 200px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      min-height: 20px;
+      margin: 0;
+      text-align: left;
+      background-color: #f9f9f9;
+    }
+
+    /* Optional styling for an error message if you want it visible */
+    #error-message {
+      color: red;
+      font-weight: bold;
+      min-height: 20px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+<main>
+  <div class="calculator-container">
+    <!-- For autograder error text (initially empty) -->
+    <div id="error-message"></div>
+
+    <h1 class="title">Currency Converter</h1>
+
+    <div class="conversion-container">
+      <h3>Converting:</h3>
+      <!-- Radio buttons for "from" currency -->
+      <div class="radio-group" id="from-radios">
+        <!-- Renamed IDs to match autograder spec -->
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="usd-clickable"
+                  name="fromCurrency"
+                  value="usd"
+                  checked
+          />
+          <label for="usd-clickable">USD: United States Dollar</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="eur-clickable"
+                  name="fromCurrency"
+                  value="eur"
+          />
+          <label for="eur-clickable">EUR: Euro</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="custom-currency-1-clickable"
+                  name="fromCurrency"
+                  value="gbp"
+          />
+          <label for="custom-currency-1-clickable">GBP: Pound Sterling</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="custom-currency-2-clickable"
+                  name="fromCurrency"
+                  value="kes"
+          />
+          <label for="custom-currency-2-clickable">KES: Kenyan Shilling</label>
+        </div>
+        <!-- This fifth one is unchanged, you can remove or rename if desired -->
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="from-cad"
+                  name="fromCurrency"
+                  value="cad"
+          />
+          <label for="from-cad">CAD: Canadian Dollar</label>
+        </div>
+      </div>
+
+      <h3>To:</h3>
+      <div class="radio-group" id="to-radios">
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="to-usd"
+                  name="toCurrency"
+                  value="usd"
+          />
+          <label for="to-usd">USD: United States Dollar</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="to-eur"
+                  name="toCurrency"
+                  value="eur"
+                  checked
+          />
+          <label for="to-eur">EUR: Euro</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="to-gbp"
+                  name="toCurrency"
+                  value="gbp"
+          />
+          <label for="to-gbp">GBP: Pound Sterling</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="to-kes"
+                  name="toCurrency"
+                  value="kes"
+          />
+          <label for="to-kes">KES: Kenyan Shilling</label>
+        </div>
+        <div class="radio-option">
+          <input
+                  type="radio"
+                  id="to-cad"
+                  name="toCurrency"
+                  value="cad"
+          />
+          <label for="to-cad">CAD: Canadian Dollar</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="input-container">
+      <!-- Renamed from "from-amount" to match autograder's required ID -->
+      <input class="input-field" type="number" id="amount-textbox" value="1.00" />
+      <input class="input-field" type="number" id="to-amount" />
+    </div>
+
+  </div>
+</main>
+
+<!-- SCRIPT -->
+<script>
+  document.addEventListener('DOMContentLoaded', () => {
+    const fromAmount = document.getElementById('amount-textbox');
+    const toAmount = document.getElementById('to-amount');
+    const errorElem = document.getElementById('error-message');
+
+    // Rates object remains the same
+    const rates = {
+      usd: { usd: 1,    eur: 0.93,  gbp: 0.79,  kes: 129,   cad: 1.35 },
+      eur: { usd: 1.07, eur: 1,     gbp: 0.85,  kes: 133.42, cad: 1.45 },
+      gbp: { usd: 1.27, eur: 1.17,  gbp: 1,     kes: 160.30, cad: 1.70 },
+      kes: { usd: 0.0078, eur: 0.0075, gbp: 0.0062, kes: 1,   cad: 0.0105 },
+      cad: { usd: 0.74, eur: 0.69,  gbp: 0.59,  kes: 95,    cad: 1 }
+    };
+
+    function getFromCurrency() {
+      return document.querySelector('input[name="fromCurrency"]:checked').value;
+    }
+
+    function getToCurrency() {
+      return document.querySelector('input[name="toCurrency"]:checked').value;
+    }
+
+    function calculateConversion(source) {
+      // Clear any previous error
+      errorElem.textContent = '';
+
+      let amount, from, to;
+      if (source === 'from') {
+        amount = parseFloat(fromAmount.value) || 0;
+        from = getFromCurrency();
+        to = getToCurrency();
+        toAmount.value = (amount * rates[from][to]).toFixed(2);
+      } else {
+        amount = parseFloat(toAmount.value) || 0;
+        from = getToCurrency();
+        to = getFromCurrency();
+        fromAmount.value = (amount * rates[from][to]).toFixed(2);
       }
+    }
 
-      header {
-        padding: 10px;
+    // Check for negative input
+    function checkNegative(e, source) {
+      const val = parseFloat(e.target.value);
+      if (val < 0) {
+        // Clear the field & show error
+        e.target.value = '';
+        errorElem.textContent = "Negative numbers are not allowed!";
+      } else {
+        calculateConversion(source);
       }
+    }
 
-      main {
-        width: 960px;
-      }
+    // Listeners for the amount fields
+    fromAmount.addEventListener('input', (e) => checkNegative(e, 'from'));
+    toAmount.addEventListener('input', (e) => checkNegative(e, 'to'));
 
-      /* Add plenty of styles below. You can change any of the above, as well! */
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>Currency Converter</h1>
-    </header>
-    <main>
-      <!-- Add your HTML code here! -->
+    // Radio button changes
+    document.querySelectorAll('input[name="fromCurrency"]').forEach(radio => {
+      radio.addEventListener('change', () => calculateConversion('from'));
+    });
+    document.querySelectorAll('input[name="toCurrency"]').forEach(radio => {
+      radio.addEventListener('change', () => calculateConversion('from'));
+    });
 
-      <!--
-        You can use radio buttons to allow the user to select the currency they want to
-        convert from; the browser will automatically only allow one button to be selected
-        at once.
-        You don't have to use radio buttons, but if you replace radio buttons, you'll want
-        some other mechanism for letting the user know which currency they've selected.
-
-          <input type="radio" name="currency" value="usd" id="usd-clickable">
-          <input type="radio" name="currency" value="eur" id="eur-clickable">
-
-        Notice that both radio buttons use the same value for the "name" attribute.
-        This is how the browser is able to ensure that only one radio button from this
-        group is selected at a time.
-        <input> is a "void" element, so there's no need to close it with </input>.
-
-        Avoid dropdowns (<select>) for this assignment, because the autograder won't be
-        able to find the options to click on.
-      -->
-
-      <!--
-        <input> takes other "type"s, not just radio. Using "text" shows a textbox, which
-        the user can type in:
-        
-          <input type="text" id="amount-textbox">
-      -->
-
-      <!--
-        Consider using the <button> element to create a button that the user can use to
-        calculate all of the values:
-        
-          <button id="calculate-clickable">Button text</button>
-          
-        You can style button elements with CSS to customize them quite a bit!
-      -->
-
-      <!--
-        You can display the results however you like. Consider using (and styling) a
-        table:
-
-          <table>
-            <thead>
-              <tr>
-                <th>USD</th>
-                <th>EUR</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td id="usd-calculated"></td>
-                <td id="eur-calculated"></td>
-              </tr>
-            </tbody>
-          </table>
-      -->
-
-      <!-- 
-        For the error message, a <span> or a <div> with the appropriate ID would work.
-        You might want to modify the JavaScript code below to show or hide the entire
-        element, rather than just changing the text.
-      -->
-
-      <!--
-        All of the above are just suggestions. Feel free to experiment with other
-        elements! You can add styles to anything you add above using CSS in the
-        <style> tag up at the top of the file.
-      -->
-    </main>
-
-    <script>
-      const EUR_PER_USD = 0.93;
-
-      // This code grabs the element above with the id "calculate-clickable". This could
-      // be a button or any other kind of element.
-      const calculateClickable = document.getElementById("calculate-clickable");
-
-      calculateClickable.addEventListener("click", () => {
-        // The code in this block runs when the element above is clicked.
-
-        // Now, let's grab the textbox using the required ID:
-        const amountTextbox = document.getElementById("amount-textbox");
-
-        // We can get the '.value' attribute of an <input> element; in this case, since it's
-        // a textbox, it'll just return the text that the user typed in.
-        const amount = amountTextbox.value;
-
-        // To convert to a number, we can use the 'parseFloat' function.
-        const amountAsNumber = parseFloat(amount);
-
-        // Write some code to make sure the amount is positive.
-        // If it's not, set the content of the error message element:
-        document.getElementById("error-message").textContent = ""; // ...
-        // Consider also hiding or showing the element:
-        //   document.getElementById("error-message").style.display = "none";
-        //   document.getElementById("error-message").style.display = "block"; // or "inline", for a span
-
-        // You'll need to think about how you want to calculate the value for each currency.
-        // Make sure to take the "from" currency into account. You can tell if a radio button
-        // is checked using the '.checked' attribute in JavaScript, which is a boolean true/false value.
-
-        // Once you have the result, you can set the content of each element with the appropriate ID:
-        //  document.getElementById("usd-calculated").textContent = ...;
-        // If you want to include additional text (e.g. a € symbol), you can either include it here
-        // or add it in the HTML, outside of the element with the "usd-calculated" ID.
-        // To do this, you may want to use a <span> (rather than a <td>) for the "usd-calculated" element.
-      });
-    </script>
-  </body>
+    // Initial calculation
+    calculateConversion('from');
+  });
+</script>
+</body>
 </html>
