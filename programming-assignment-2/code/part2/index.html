@@ -33,7 +33,31 @@
     </main>
 
     <script>
-      // Your solution here:
+      const shapeContainer = document.querySelector('.shape-container');
+      const stopButton = document.getElementById('stop-button');
+      let intervalId;
+
+      const colors = ['red', 'orange', 'yellow', 'green', 'blue', 'purple'];
+
+      const createBubble = () => {
+        const bubble = document.createElement('div');
+        bubble.classList.add('circle');
+
+        const randomColorIndex = Math.floor(Math.random() * colors.length);
+        bubble.classList.add(colors[randomColorIndex]);
+
+        bubble.addEventListener('click', (event) => {
+          event.currentTarget.style.display = 'none';
+        });
+
+        shapeContainer.appendChild(bubble);
+      };
+
+      intervalId = setInterval(createBubble, 500);
+
+      stopButton.addEventListener('click', () => {
+        clearInterval(intervalId);
+      });
     </script>
   </body>
 </html>

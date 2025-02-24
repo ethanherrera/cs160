@@ -1,62 +1,390 @@
 <!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shopping List</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/4.7.7/handlebars.min.js"></script>
+  <style>
+    :root {
+      --bg-primary: #f5f5f5;
+      --bg-secondary: white;
+      --bg-tertiary: #f8f9fa;
+      --text-primary: #333;
+      --text-secondary: #264653;
+      --accent-primary: #2a9d8f;
+      --accent-secondary: #1d7268;
+      --danger: #e76f51;
+      --danger-hover: #d65f41;
+      --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      --card-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.1);
+      --border-color: #e0e0e0;
+      --explanation-bg: #f0f7f6;
+    }
 
-<html>
-  <head>
-    <title></title>
+    .dark-theme {
+      --bg-primary: #121212;
+      --bg-secondary: #1e1e1e;
+      --bg-tertiary: #2d2d2d;
+      --text-primary: #e0e0e0;
+      --text-secondary: #b0b0b0;
+      --accent-primary: #2a9d8f;
+      --accent-secondary: #3db3a4;
+      --card-shadow: 0 2px 10px rgba(0, 0, 0, 0.4);
+      --card-shadow-hover: 0 5px 15px rgba(0, 0, 0, 0.6);
+      --border-color: #454545;
+      --explanation-bg: #252525;
+    }
 
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
-      rel="stylesheet"
-    />
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, var(--bg-primary) 0%, var(--bg-primary) 80%, var(--accent-primary) 200%);
+      color: var(--text-primary);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+      min-height: 100vh;
+      transition: background 0.4s ease, color 0.4s ease;
+    }
 
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: linear-gradient(to bottom, var(--bg-secondary), var(--bg-secondary) 95%, var(--accent-primary) 200%);
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: var(--card-shadow);
+      transition: background 0.4s ease, box-shadow 0.4s ease;
+    }
 
-    <style>
-      body {
-        font-family: "Lato", sans-serif;
-        margin: 0;
-        padding: 0;
-      }
+    h1 {
+      color: var(--accent-primary);
+      text-align: center;
+      margin-bottom: 30px;
+      font-weight: 600;
+      transition: color 0.4s ease;
+    }
 
-      header {
-        padding: 10px;
-        text-align: center;
-      }
+    .theme-switch-container {
+      display: flex;
+      justify-content: flex-end;
+      margin-bottom: 20px;
+      align-items: center;
+    }
 
-      main {
-        width: 960px;
-        margin: 0 auto;
-      }
+    .theme-switch {
+      position: relative;
+      display: inline-block;
+      width: 60px;
+      height: 30px;
+    }
 
-      a:link {
-        color: #007bff;
-        text-decoration: none;
-      }
+    .theme-switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
 
-      a:visited {
-        color: #007bff;
-      }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(to right, #627d98, #334e68);
+      transition: 0.4s;
+      border-radius: 30px;
+    }
 
-      a:hover {
-        text-decoration: underline;
-      }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 22px;
+      width: 22px;
+      left: 4px;
+      bottom: 4px;
+      background: linear-gradient(to top right, #ffd166, #ffb347);
+      transition: 0.4s;
+      border-radius: 50%;
+    }
 
-      li {
-        font-size: 1.2em;
-        list-style-type: none;
-      }
-    </style>
-  </head>
-  <body>
-    <header>
-      <h1>CS 160/260A: Programming Assignment 2</h1>
-    </header>
-    <main>
-      <h2><a href="part1/index.html">Part 1: Misbehaving bubble wrap</a></h2>
-      <h2><a href="part2/index.html">Part 2: Incremental bubble wrap</a></h2>
-      <h2><a href="part3/index.html">Part 3: Templated element creation</a></h2>
-    </main>
-  </body>
+    input:checked + .slider {
+      background: linear-gradient(to right, #243b53, #102a43);
+    }
+
+    input:checked + .slider:before {
+      transform: translateX(30px);
+      background: linear-gradient(to top right, #d6e5fa, #ffffff);
+    }
+
+    .theme-text {
+      margin-right: 10px;
+      font-weight: 500;
+      color: var(--text-primary);
+      transition: color 0.4s ease;
+    }
+
+    .input-form {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 15px;
+      margin-bottom: 20px;
+    }
+
+    .input-form input {
+      padding: 12px;
+      border: 2px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 16px;
+      transition: border-color 0.3s, background-color 0.4s ease, color 0.4s ease;
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .input-form input:focus {
+      border-color: var(--accent-primary);
+      outline: none;
+    }
+
+    .buttons {
+      grid-column: span 2;
+      display: flex;
+      gap: 10px;
+    }
+
+    button {
+      cursor: pointer;
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-size: 16px;
+      font-weight: 500;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+    }
+
+    button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    #clear-button {
+      background: linear-gradient(135deg, var(--danger), var(--danger-hover));
+    }
+
+    .items-container {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+      gap: 20px;
+      margin-top: 30px;
+    }
+
+    .shopping-list-item {
+      background: linear-gradient(to bottom, var(--bg-tertiary), var(--bg-tertiary) 95%, var(--accent-primary) 200%);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s, box-shadow 0.2s, background 0.4s ease;
+    }
+
+    .shopping-list-item:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--card-shadow-hover);
+    }
+
+    .item-image-container {
+      height: 180px;
+      overflow: hidden;
+      background-color: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.4s ease;
+    }
+
+    .item-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .item-details {
+      padding: 15px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .item-name {
+      font-weight: 600;
+      font-size: 1.1rem;
+      color: var(--text-secondary);
+      margin: 0;
+      transition: color 0.4s ease;
+    }
+
+    .item-price {
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .design-explanation {
+      margin-top: 50px;
+      padding: 20px;
+      background: linear-gradient(to right, var(--explanation-bg), var(--explanation-bg) 90%, var(--accent-primary) 200%);
+      border-radius: 8px;
+      border-left: 4px solid var(--accent-primary);
+      transition: background 0.4s ease;
+    }
+
+    .design-explanation h3 {
+      color: var(--accent-primary);
+      transition: color 0.4s ease;
+    }
+
+    .design-explanation li {
+      color: var(--text-primary);
+      transition: color 0.4s ease;
+    }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="theme-switch-container">
+    <span class="theme-text">Theme</span>
+    <label class="theme-switch">
+      <input type="checkbox" id="theme-toggle">
+      <span class="slider"></span>
+    </label>
+  </div>
+
+  <h1>Shopping List</h1>
+
+  <div class="input-form">
+    <input type="text" id="item-name-input" placeholder="Item name">
+    <input type="text" id="item-price-input" placeholder="Price">
+    <input type="text" id="item-image-url-input" placeholder="Image URL (optional)">
+    <div class="buttons">
+      <button id="add-item">Add item</button>
+      <button id="clear-button">Clear all</button>
+    </div>
+  </div>
+
+  <div id="items" class="items-container">
+  </div>
+
+  <div class="design-explanation">
+    <h3>Design Choices Explanation:</h3>
+    <ol>
+      <li>I used a card-based layout with shadows and hover effects to create a modern, interactive feel that clearly distinguishes each shopping item, making the list visually organized and engaging.</li>
+      <li>I implemented a teal/mint color scheme throughout the interface to create a cohesive, fresh appearance that feels inviting and modern, while using contrasting colors for interactive elements like buttons to improve usability.</li>
+      <li>For the images, I created a fixed-height container with object-fit: cover to ensure consistent image presentation regardless of the source image's dimensions, maintaining the overall visual harmony of the list.</li>
+    </ol>
+  </div>
+</div>
+
+<script id="item-template" type="text/x-handlebars-template">
+  <div class="shopping-list-item">
+    {{#if imageUrl}}
+      <div class="item-image-container">
+        <img src="{{imageUrl}}" alt="{{name}}" class="item-image">
+      </div>
+    {{/if}}
+    <div class="item-details">
+      <h3 class="item-name">{{name}}</h3>
+      <span class="item-price">${{price}}</span>
+    </div>
+  </div>
+</script>
+
+<script>
+  const itemTemplate = Handlebars.compile(document.getElementById('item-template').innerHTML);
+  const itemsContainer = document.getElementById('items');
+  const nameInput = document.getElementById('item-name-input');
+  const priceInput = document.getElementById('item-price-input');
+  const imageUrlInput = document.getElementById('item-image-url-input');
+  const addButton = document.getElementById('add-item');
+  const clearButton = document.getElementById('clear-button');
+  const themeToggle = document.getElementById('theme-toggle');
+
+  const loadItems = () => {
+    const savedItems = JSON.parse(localStorage.getItem('shoppingListItems')) || [];
+    itemsContainer.innerHTML = '';
+
+    savedItems.forEach(item => {
+      const itemHtml = itemTemplate(item);
+      itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+    });
+  };
+
+  const saveItems = () => {
+    const items = [];
+    const itemElements = document.querySelectorAll('.shopping-list-item');
+
+    itemElements.forEach(element => {
+      const name = element.querySelector('.item-name').textContent;
+      const price = element.querySelector('.item-price').textContent.slice(1);
+      const imageElement = element.querySelector('.item-image');
+      const imageUrl = imageElement ? imageElement.src : '';
+
+      items.push({ name, price, imageUrl });
+    });
+
+    localStorage.setItem('shoppingListItems', JSON.stringify(items));
+  };
+
+  const addItem = () => {
+    const name = nameInput.value.trim();
+    const price = priceInput.value.trim();
+    const imageUrl = imageUrlInput.value.trim();
+
+    if (!name || !price) {
+      return;
+    }
+
+    const item = { name, price, imageUrl };
+    const itemHtml = itemTemplate(item);
+
+    itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
+    saveItems();
+
+    nameInput.value = '';
+    priceInput.value = '';
+    imageUrlInput.value = '';
+    nameInput.focus();
+  };
+
+  const clearItems = () => {
+    itemsContainer.innerHTML = '';
+    localStorage.removeItem('shoppingListItems');
+  };
+
+  const toggleTheme = () => {
+    document.body.classList.toggle('dark-theme');
+    localStorage.setItem('darkMode', document.body.classList.contains('dark-theme'));
+  };
+
+  const loadTheme = () => {
+    const darkMode = localStorage.getItem('darkMode') === 'true';
+    document.body.classList.toggle('dark-theme', darkMode);
+    themeToggle.checked = darkMode;
+  };
+
+  addButton.addEventListener('click', addItem);
+  clearButton.addEventListener('click', clearItems);
+  themeToggle.addEventListener('change', toggleTheme);
+
+  document.addEventListener('DOMContentLoaded', () => {
+    loadItems();
+    loadTheme();
+  });
+</script>
+</body>
 </html>
