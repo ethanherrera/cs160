@@ -305,7 +305,6 @@
 </script>
 
 <script>
-  const itemTemplate = Handlebars.compile(document.getElementById('item-template').innerHTML);
   const itemsContainer = document.getElementById('items');
   const nameInput = document.getElementById('item-name-input');
   const priceInput = document.getElementById('item-price-input');
@@ -319,7 +318,9 @@
     itemsContainer.innerHTML = '';
 
     savedItems.forEach(item => {
-      const itemHtml = itemTemplate(item);
+      const template = document.getElementById('item-template').innerHTML;
+      const compiledTemplate = Handlebars.compile(template);
+      const itemHtml = compiledTemplate(item);
       itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
     });
   };
@@ -350,7 +351,10 @@
     }
 
     const item = { name, price, imageUrl };
-    const itemHtml = itemTemplate(item);
+
+    const template = document.getElementById('item-template').innerHTML;
+    const compiledTemplate = Handlebars.compile(template);
+    const itemHtml = compiledTemplate(item);
 
     itemsContainer.insertAdjacentHTML('beforeend', itemHtml);
     saveItems();
