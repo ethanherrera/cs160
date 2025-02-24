@@ -17,43 +17,58 @@
       body {
         margin: 0;
         padding: 0;
+        overflow: hidden;
       }
 
       .red {
         background-color: #dc3545;
+        flex: 1;
       }
 
       .blue {
         background-color: #007bff;
+        flex: 1;
       }
 
       .green {
         background-color: #28a745;
+        flex: 1;
       }
 
       .yellow {
         background-color: #ffc107;
-      }
-
-      .gray,
-      .grey {
-        background-color: #6c757d;
+        flex: 1;
       }
 
       main {
         width: 100vw;
         height: 100vh;
-
         display: flex;
-        /* You may add additional code here, if you need. */
+        flex-direction: column;
+        transition: transform 0.3s ease-in-out;
       }
+
+      /* Rotate everything counterclockwise in landscape mode */
+      @media screen and (orientation: landscape) {
+        main{
+          flex-direction: row;
+        }
+        .red, .blue, .green, .yellow {
+          flex: 1;
+        }
+      }
+
+
 
       /* Add whatever CSS you need below to reference the elements you create in your HTML. */
     </style>
   </head>
   <body>
     <main>
-      <!-- Add the appropriate <div> elements here. -->
+      <div class="red"></div>
+      <div class="blue"></div>
+      <div class="green"></div>
+      <div class="yellow"></div>
     </main>
   </body>
 </html>

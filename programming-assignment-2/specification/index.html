@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Programming Assignment 2: DOM basics</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;1,300;1,400;1,700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <meta charset="UTF-8" />
+
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/languages/javascript.min.js"></script>
+
+    <script>
+      hljs.highlightAll();
+    </script>
+
+    <script>
+      const createHeader = () => {
+        const headerBg = document.getElementById("header-bg");
+        headerBg.innerHTML = "";
+
+        // https://materialui.co/colors
+        const colors = [
+          "#FFEBEE",
+          "#FCE4EC",
+          "#F3E5F5",
+          "#EDE7F6",
+          "#E8EAF6",
+          "#E3F2FD",
+          "#E1F5FE",
+          "#E0F7FA",
+          "#E0F2F1",
+          "#E8F5E9",
+          "#F1F8E9",
+          "#F9FBE7",
+          "#FFFDE7",
+          "#FFF8E1",
+          "#FFF3E0",
+          "#FBE9E7",
+          "#EFEBE9",
+          "#FAFAFA",
+          "#ECEFF1",
+        ];
+
+        for (let i = 0; i < 6; i++) {
+          const pillContainer = document.createElement("div");
+          pillContainer.classList.add("pill-container");
+          headerBg.appendChild(pillContainer);
+
+          const totalWidth = headerBg.offsetWidth;
+
+          const initialOffset = -Math.random() * 100;
+          pillContainer.style.transform = `translateX(${initialOffset}px)`;
+          let pillsWidth = initialOffset;
+          let iters = 0;
+          while (pillsWidth < totalWidth + 300 && iters < 100) {
+            const pill = document.createElement("div");
+            pill.classList.add("pill");
+            pill.style.width = `calc(160pt / 6)`;
+            pill.style.backgroundColor =
+              colors[Math.floor(Math.random() * colors.length)];
+            pillContainer.appendChild(pill);
+
+            pillsWidth += pill.offsetWidth;
+
+            iters++;
+          }
+        }
+      };
+
+      const debounce = (func, wait, immediate) => {
+        let timeout;
+        return function () {
+          const context = this,
+            args = arguments;
+          const later = function () {
+            timeout = null;
+            if (!immediate) func.apply(context, args);
+          };
+          const callNow = immediate && !timeout;
+          clearTimeout(timeout);
+          timeout = setTimeout(later, wait);
+          if (callNow) func.apply(context, args);
+        };
+      };
+
+      const createHeaderDebounced = debounce(createHeader, 500);
+
+      window.addEventListener("DOMContentLoaded", createHeader);
+      window.addEventListener("resize", createHeaderDebounced);
+    </script>
+  </head>
+
+  <body>
+    <header>
+      <div id="header-bg" class="header-bg" aria-hidden></div>
+      <h1>
+        <span class="pre-header">CS 160/260A Programming Assignment 2</span
+        ><br />DOM basics
+      </h1>
+    </header>
+    <main>
+      <p>Welcome to CS 160’s second programming assignment!</p>
+
+      <p>In this two-part programming assignment, you will:</p>
+
+      <ul>
+        <li>
+          Practice using the DOM to insert elements and listen for events on Web
+          pages
+        </li>
+        <li>Use a templating engine to render complex component trees</li>
+      </ul>
+
+      <p>Let’s dive in!</p>
+
+      <h2>Contents</h2>
+
+      <ul>
+        <li>
+          <a href="#Collaboration">Collaboration policy</a>
+        </li>
+        <li>
+          <a href="#Starter_code">Starter code</a>
+        </li>
+        <li>
+          <a href="#Submission">Submission</a>
+        </li>
+        <li>
+          <a href="#Autograder">Autograder</a>
+        </li>
+
+        <li>
+          <a href="#Part_1">Part 1 · Misbehaving bubble wrap</a>
+        </li>
+        <li>
+          <a href="#Part_2">Part 2 · Incremental bubble wrap</a>
+        </li>
+        <li>
+          <a href="#Part_3">Part 3 · Templated element creation</a>
+        </li>
+      </ul>
+
+      <h2 id="Collaboration">Collaboration policy</h2>
+
+      <p>
+        Programming assignments should be your own. You are not allowed to copy
+        other students code, or copy/modify large chunks of code or entire
+        projects found online (e.g. on GitHub).
+      </p>
+
+      <p>
+        You are allowed to consult online resources, e.g. Stack Overflow, to get
+        answers to specific implementation questions.
+      </p>
+
+      <p>
+        LLM-based tools like ChatGPT and GitHub Copilot are helpful and
+        increasingly common in industry, and
+        <strong>you may use them</strong> to help you complete assignments, with
+        the following caveats:
+      </p>
+
+      <ul>
+        <li>
+          You should stick to using AI for line- or function-level edits; do
+          <strong>not</strong> paste the entire chunks of the assignment
+          description into ChatGPT (it’s pretty obvious when you do this).
+          Programming assignments are not quite like real-world software
+          development, because we often provide detail in the specification that
+          would not normally be written out for you in a real-world project. If
+          you use these tools, you should practice the skill of communicating
+          with the tools rather than letting the assignment document do this for
+          you.
+        </li>
+        <li>
+          We generally describe what we want you to learn from a particular
+          exercise. Work through each task with the intention of
+          <strong>practicing the skills we mention</strong>; if AI helped you
+          get unstuck, do your best to come away with an understanding of the
+          concepts targeted by the assignment.
+        </li>
+        <li>
+          When we ask you to think about the design and aesthetics of your
+          application,
+          <strong>we’re looking for <em>your</em> creative spark</strong>. AI
+          can be great for helping you find the right CSS rules to style an
+          element, but you should be making your own high-level decisions.
+        </li>
+        <li>
+          The goal of these assignments is to develop your skills to work
+          independently on code implementations. LLMs can be part of this
+          process, but when you prompt AI tools to help you write assignment
+          code,
+          <strong>you should not share the exact prompts you used</strong> with
+          other students. This has a similar effect as sharing code, since it
+          prevents other students from developing their own skills with the
+          tools they are using. Of course, it's always okay to exchange
+          high-level advice with your peers.
+        </li>
+      </ul>
+
+      <h2 id="Starter_code">Starter code</h2>
+
+      <p>
+        This assignment includes starter code in the
+        <code>code</code> directory. You should build on top of this code for
+        your assignment submission.
+      </p>
+
+      <p>
+        Please do <strong>not</strong> fork the repository on GitHub or upload
+        your code anywhere public-facing. Remember, students aren’t allowed to
+        directly copy each other’s code for these assignments; if another
+        student copies your code, we won’t be able to tell who copied whom, and
+        you’ll be on the hook for the plagiarism too!
+      </p>
+
+      <h2 id="Submission">Submission</h2>
+
+      <p>
+        You will modify the starter code provided to you with the assignment,
+        then submit your code as a zip file to Gradescope containing your code
+        submission. Gradescope will give you a score for the autogradable
+        portions of the assignment, but some portions will be manually graded by
+        course staff after the submission deadline.
+      </p>
+
+      <p>Submission file structure:</p>
+
+      <ul>
+        <li>submission.zip</li>
+        <ul>
+          <li>part1/</li>
+          <ul>
+            <li>index.html</li>
+            <li>main.css</li>
+          </ul>
+          <li>part2/</li>
+          <ul>
+            <li>index.html</li>
+            <li>main.css</li>
+          </ul>
+          <li>part3/</li>
+          <ul>
+            <li>index.html</li>
+            <li>main.css</li>
+            <li>handlebars.js</li>
+          </ul>
+          <li>index.html</li>
+          <li>serve.json</li>
+          <li>(any other support files, e.g. CSS files you create)</li>
+        </ul>
+      </ul>
+
+      <h2 id="Autograder">Autograder</h2>
+
+      <p>
+        If you want to use
+        <a href="https://playwright.dev/docs/running-tests"
+          >Playwright’s interactive debugging UI</a
+        >, you can run the autograder locally by cloning the
+        <a
+          href="https://github.com/cs160-spring2025/programming-assignment-2-autograder"
+          >autograder repository</a
+        >
+        and following the instructions in the README.
+      </p>
+
+      <p>
+        We recommend trying this! It’s pretty cool, and you’ll need to use it
+        for a later programming assignment in the course.
+      </p>
+
+      <p>
+        If you’re having trouble with the installation, please make an Ed post.
+      </p>
+
+      <section id="Part_1" style="margin-top: 48px">
+        <h2>Part 1 · Misbehaving bubble wrap</h2>
+        <p>
+          <em> Skills: Selecting elements, event handling, updating styles </em>
+        </p>
+
+        <p>
+          Your task is to create digital bubble wrap. Unlike normal bubble wrap,
+          clicking one bubble in your misbehaving bubble wrap may pop multiple
+          bubbles. Your bubble wrap should “pop” according to these rules:
+        </p>
+
+        <ol>
+          <li>
+            Clicking on a <strong>purple</strong> bubble hides all purple
+            bubbles.
+          </li>
+          <ol type="a">
+            <li>
+              Hiding a bubble should change the layout of the rest of the
+              document, not just make the bubble invisible (see the MDN
+              references for
+              <a href="https://developer.mozilla.org/en-US/docs/Web/CSS/display"
+                >display</a
+              >
+              and
+              <a
+                href="https://developer.mozilla.org/en-US/docs/Web/CSS/visibility"
+                >visibility</a
+              >
+              in CSS). Make sure the “Reset” button works with your
+              implementation (you may change its code if you need to).
+            </li>
+          </ol>
+          <li>
+            Clicking on a <strong>green</strong> bubble hides all bubbles that
+            are <strong>green</strong> OR <strong>blue</strong> (i.e., all green
+            bubbles and all blue bubbles).
+          </li>
+          <li>
+            Clicking on an <strong>orange</strong>
+            <strong>bordered</strong> bubble hides just that clicked bubble.
+          </li>
+          <li>
+            Hovering over the gradient bubble hides the gradient bubble (and it
+            should stay hidden after the user moves their mouse away).
+          </li>
+        </ol>
+
+        <div class="admonition-info">
+          Hint: You shouldn’t need to make any changes to the HTML to complete
+          this task. You can add the same event listener to multiple elements by
+          simply looping through a list of elements and calling addEventListener
+          for each one.
+        </div>
+
+        <div class="admonition-warning">
+          Don’t bring in any additional JavaScript libraries (like jQuery or
+          React).
+        </div>
+
+        <h3>Scoring (6 points)</h3>
+
+        <p>This task is autograded.</p>
+        <!-- unchanged below this line -->
+
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Document_object_model/Locating_DOM_elements_using_selectors"
+            >
+              Locating DOM elements using selectors - Web APIs | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Document/querySelectorAll"
+            >
+              Document: querySelectorAll() method - Web APIs | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/for...of"
+            >
+              for...of - JavaScript | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/EventTarget/addEventListener"
+            >
+              EventTarget: addEventListener() method - Web APIs | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Element/click_event"
+            >
+              Element: click event - Web APIs | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/HTML/Global_attributes/style"
+            >
+              style - HTML: HyperText Markup Language | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Event/target"
+            >
+              Event: target property - Web APIs | MDN
+            </a>
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Element/mouseover_event"
+            >
+              Element: mouseover event - Web APIs | MDN
+            </a>
+          </li>
+        </ul>
+      </section>
+
+      <section id="Part_2">
+        <h2>Part 2 · Incremental bubble wrap</h2>
+        <p>
+          <em
+            >Skills: Using timers, practicing callbacks, using random values,
+            generating elements</em
+          >
+        </p>
+
+        <p>Work in the <code>part2</code> folder.</p>
+
+        <p>
+          Add a new bubble to the bubble container every
+          <strong>half second</strong> (500ms). You should randomly choose a
+          color CSS class for each bubble (implementing six distinct bubble
+          colors). Use the color classes defined in <code>part2/main.css</code>:
+          <code>.red</code>, <code>.orange</code>, <code>.yellow</code>,
+          <code>.green</code>, <code>.blue</code>, and <code>.purple</code>.
+        </p>
+
+        <p>Continue to add bubbles until the user clicks the stop button.</p>
+
+        <p>
+          Each bubble should, when clicked,
+          <strong>hide or remove itself</strong> (but not any other bubbles), in
+          the same way as part 1, so that the element is no longer part of the
+          flow of the document. Make sure the clicked bubble is the one being
+          hidden! There are a few ways to do this.
+        </p>
+
+        <div class="admonition-info">
+          Hint: you may want to create a new event listener each time you make a
+          new bubble. You can attach the event listener once you have a
+          reference to the bubble element; the
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement"
+            >document.createElement()</a
+          >
+          function may prove useful.
+        </div>
+
+        <h3>Scoring (6 points)</h3>
+
+        <p>This task is autograded.</p>
+        <!-- unchanged below this line -->
+
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/setInterval"
+              >setInterval() - Web APIs | MDN</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Math/random"
+              >Math.random() - JavaScript | MDN</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Document/createElement"
+              >Document: createElement() method - Web APIs | MDN</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Element/classList"
+              >Element: classList property - Web APIs | MDN</a
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section id="Part_3">
+        <h2>Part 3 · Templated element creation</h2>
+
+        <em>Skills: Rendering complex structures in the DOM</em>
+
+        <h3>Background</h3>
+
+        <p>
+          In the last task, we added new circle elements to the page dynamically
+          with JavaScript.
+        </p>
+
+        <p>
+          In general, it's easy to add new components of any type to the page:
+        </p>
+
+        <div
+          style="
+            background-color: #f3f3f3;
+            border: 1px dashed #ddd;
+            padding: 12px;
+          "
+        >
+          <p>
+            <strong>First, locate the element you want to insert into:</strong>
+          </p>
+
+          <p>
+            This could be <code>document.body</code> (the full “body” page), or
+            any DOM element that can have children, located with e.g.
+            <code>document.querySelector()</code>.
+          </p>
+
+          <pre><code class="language-javascript">const containerElement = document.querySelector("main");</code></pre>
+
+          <p><strong>Then, choose:</strong></p>
+          <div style="margin-left: 24px">
+            <p>
+              <em>By constructing DOM objects:</em>
+            </p>
+            <pre><code class="language-javascript">const newDiv = document.createElement("div"); 
+      newDiv.style.color = "red"; 
+      newDiv.textContent = "hello!"; 
+      containerElement.appendChild(newDiv);</code></pre>
+            <p>
+              <em>With innerHTML:</em>
+            </p>
+            <pre><code class="language-javascript">containerElement.innerHTML += '&lt;div style="color: red;"&gt;' + 'hello!' + '&lt;/div&gt;';</code></pre>
+          </div>
+
+          <p>
+            You can use either technique to add new elements to the page. You
+            may do this for a number of reasons, like in response to a user’s
+            action.
+          </p>
+        </div>
+
+        <p>
+          As you will find as you build more complex applications, you often
+          want to add a more complex structure to the page consisting of
+          multiple elements.
+        </p>
+
+        <p>
+          For example, see this interaction from GrubHub, which adds the “Chile
+          Verde” item to the cart dynamically using JavaScript.
+        </p>
+
+        <p>
+          <video
+            controls
+            autoplay
+            loop
+            muted
+            playsinline
+            style="max-width: 80%; margin: 0 auto; display: block"
+          >
+            <source src="images/grubhub-cart.webm" type="video/mp4" />
+            Your browser does not support the video tag.
+          </video>
+        </p>
+
+        <p>
+          The new cart item is a complex hierarchy of HTML components,
+          containing the item’s title, a delete button, ingredient information,
+          and other detail. See this screenshot from my browser's developer
+          tools:
+        </p>
+
+        <img
+          style="max-width: 80%; margin: 0 auto; display: block"
+          src="images/grubhub-component-tree.png"
+          alt="A nested tree of &lt;div&gt;, &lt;span&gt; and other elements representing the GrubHub cart item."
+        />
+
+        <p>
+          It can be a bit cumbersome to add a complex <em>nested</em> tree of
+          elements to your page. Take this simpler example, with just three
+          total HTML elements:
+        </p>
+
+        <div
+          style="
+            background-color: #f3f3f3;
+            border: 1px dashed #ddd;
+            padding: 12px;
+          "
+        >
+          <p>
+            As before, you can create elements in JavaScript and use DOM
+            functions (like <code>appendChild</code>) to organize them in a
+            hierarchy:
+          </p>
+
+          <pre><code class="language-javascript">const profileDiv = document.createElement("div");
+profileDiv.addClass("user-profile");
+
+const profilePic = document.createElement("img");
+profilePic.src = picUrl; // from elsewhere in the code
+profilePic.addClass("profile-pic");
+
+const bio = document.createElement("div");
+bio.textContent = userBio; // from elsewhere in the code
+bio.addClass("profile-bio");
+
+profileDiv.appendChild(profilePic);
+profileDiv.appendChild(bio);
+
+containerElement.appendChild(profileDiv);</code></pre>
+
+          <p>
+            Or use <code>innerHTML</code>, this time using
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Template_literals"
+              >template literal syntax</a
+            >:
+          </p>
+
+          <pre><code class="language-javascript">containerElement.innerHTML += `
+  &lt;div class="user-profile"&gt;
+    &lt;img src="${picUrl}" class="profile-pic"&gt;
+    &lt;div class="bio"&gt;${userBio}&lt;/div&gt;
+  &lt;/div&gt;
+`;</code></pre>
+        </div>
+
+        <p>
+          The DOM-based approach quickly becomes difficult to read and reason
+          about.
+        </p>
+
+        <p>
+          Using <code>innerHTML</code> with template strings is a lot more
+          ergonomic, but it comes with some danger. Since you’re not separating
+          the structure information (your HTML template) from the interpolated
+          data (<code>profilePic</code> and <code>userBio</code>), your page can
+          break if the <code>userBio</code> variable happens to have HTML code
+          inside (e.g. containing <code>&lt;/div&gt;</code>), and this can lead
+          to
+          <a
+            href="https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html#output-encoding-for-html-contexts"
+            >cross-site scripting vulnerabilities</a
+          >
+          (similar to what you see in other cases where data and code are
+          interspersed, like in SQL injection or stack overrun vulnerabilities).
+        </p>
+
+        <p>
+          One common way to add complex trees to a document while avoiding these
+          issues is to use a <strong>templating engine</strong>. For this part
+          of the assignment, you’ll use <strong>Handlebars</strong>, a
+          JavaScript library that allows you to construct, then use structured
+          templates to create new elements on the page.
+        </p>
+
+        <h3>Using Handlebars</h3>
+
+        <p>
+          We’ve included the full Handlebars distribution in the starter code
+          for this part of the assignment and imported it into the page so you
+          can use the global Handlebars object in your own JavaScript code.
+        </p>
+
+        <div class="admonition-warning">
+          Make sure to keep the existing <code>handlebars.js</code> import at
+          the top of the HTML file; do not install the Handlebars dependency
+          yourself. In the autograder, we augment this import with a
+          <em>test spy</em> that makes sure that you called Handlebars
+          correctly.
+        </div>
+
+        <p>
+          To create a new template function in our JavaScript code, we can call
+          <code>Handlebars.compile()</code> with a
+          <strong>template string</strong>, which can include:
+        </p>
+
+        <ul>
+          <li>
+            any literal text or HTML we want to place into the page when the
+            template is rendered
+          </li>
+          <li>
+            variables, surrounded with double curly {{brackets}}, that can be
+            slotted into the template at render time.
+          </li>
+        </ul>
+
+        <pre><code
+            class="language-javascript"
+          >const courseTemplate = Handlebars.compile(
+  "I'm taking <strong>{{course}}</strong>!"
+);</code></pre>
+
+        <p>
+          The return value of Handlebars.compile() is a function that, when
+          called, will slot in any variables you pass in:
+        </p>
+
+        <pre><code class="language-javascript">// This is a JavaScript "object", like a hashmap
+const variables = {
+  course: "CS 160",
+};
+
+const fullString = courseTemplate(variables);
+
+console.log(fullString); // I'm taking <strong>CS 160</strong>!</code></pre>
+
+        <p>This also works for templates containing HTML code:</p>
+
+        <pre><code
+            class="language-javascript"
+          >const profileTemplate = Handlebars.compile(`
+  &lt;div class="user-profile"&gt;
+    &lt;img src="{{picUrl}}" class="profile-pic"&gt;
+    &lt;div class="bio"&gt;{{userBio}}&lt;/div&gt;
+  &lt;/div&gt;
+`);</code></pre>
+
+        <p>
+          <code>{{picUrl}}</code> and <code>{{userBio}}</code> are variables
+          that can be replaced when we use the Handlebars template:
+        </p>
+
+        <pre><code class="language-javascript">const variables = {
+  picUrl: "https://example.com/pic.jpg",
+  userBio: "I'm a student at UC Berkeley!",
+};
+
+const fullString = profileTemplate(variables);
+
+console.log(fullString);
+
+/* Result:
+  &lt;div class="user-profile"&gt;
+    &lt;img src="https://example.com/pic.jpg" class="profile-pic"&gt;
+    &lt;div class="bio"&gt;I'm a student at UC Berkeley!&lt;/div&gt;
+  &lt;/div&gt;
+*/</code></pre>
+
+        <p>We can then use this string in a component’s innerHTML:</p>
+
+        <pre><code class="language-javascript">containerElement.innerHTML += fullString;</code></pre>
+
+        <p>
+          (or use
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Web/API/Element/insertAdjacentHTML#description"
+            >insertAdjacentHTML</a
+          >, if you want to be fancy. This can help if you don't want to remove
+          and re-add elements already in the container's HTML, e.g. when you
+          have added event listeners to elements in the container.)
+        </p>
+
+        <p>
+          This is safe, since Handlebars
+          <a
+            href="https://developer.mozilla.org/en-US/docs/Glossary/Character_reference"
+            >sanitizes HTML</a
+          >
+          in variables for us:
+        </p>
+
+        <pre><code class="language-javascript">const variables = {
+  // If a user can control these variables, they might try to add HTML or JavaScript
+  // code that could break or even hack our page:
+  picUrl: "\" onerror=\"alert(1)",
+  userBio: "&lt/div&gt; &lt;script&gt;...&lt;/script&gt;",
+};
+
+const fullString = profileTemplate(variables);
+
+console.log(fullString);
+
+/* But Handlebars renders these special characters safely
+   rather than allowing them to become HTML code:
+
+  &lt;div class=&quot;user-profile&quot;&gt;
+    &lt;img src=&quot;&amp;quot; onerror=&amp;quot;alert(1)&quot; class=&quot;profile-pic&quot;&gt;
+    &lt;div class=&quot;bio&quot;&gt;&amp;lt;/div&amp;gt; &amp;lt;script&amp;gt;...&amp;lt;/script&amp;gt;&lt;/div&gt;
+  &lt;/div&gt;
+ */</code></pre>
+
+        <p>
+          As you'll see in this assignment, you can also store your templates
+          inside your HTML code (rather than inside a JavaScript string), which
+          can be a nice way to keep your HTML structure separate from your code
+          logic.
+        </p>
+
+        <p>
+          Handlebars offers a few additional helpful features, like
+          <a href="https://handlebarsjs.com/guide/partials.html#basic-partials"
+            >partials</a
+          >
+          (which help deal with that problem of complex nested structures) and
+          <a href="https://handlebarsjs.com/guide/builtin-helpers.html"
+            >conditionals</a
+          >
+          (which you’ll use in this task to choose which components of a
+          template should be rendered based on the input variable values).
+        </p>
+
+        <p>
+          See the
+          <a href="https://handlebarsjs.com/guide/">Handlebars documentation</a>
+          for more information on using the Handlebars templating engine.
+        </p>
+
+        <h3>Task</h3>
+
+        <p>
+          Create a simple “shopping list” application in
+          <code>part3/index.html</code>.
+        </p>
+        <p>The shopping list should:</p>
+
+        <ul>
+          <li>
+            Accept an item name, price, and full image URL (for some image on
+            the Web)
+          </li>
+          <li>
+            When the “Add item” button (<code>#add-item</code>) is clicked,
+            <ul>
+              <li>
+                If the item name or price is missing, do nothing (you may, but
+                are not required to, show an error message).
+              </li>
+              <li>
+                Add a div containing the new item’s information to the
+                <code>#items</code> element on the page, which contains the item
+                name and price. The new div should have class
+                <code>shopping-list-item</code>.
+              </li>
+              <li>
+                <strong>If</strong> an image URL was entered, the div should
+                contain an <code>&lt;img&gt;</code> tag pointing to the
+                requested image. Otherwise, there should be <strong>no</strong>
+                <code>img</code> tag in the item’s div. Consider using
+                Handlebars conditionals for this!
+                <ul>
+                  <li>
+                    To test this, you can use image URLs from
+                    <a href="https://placehold.co/">https://placehold.co/</a>,
+                    or find real product images.
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <p>You will need to:</p>
+
+        <ul>
+          <li>
+            Add two fields (price and image URL) to the existing form.
+            <ul>
+              <li>
+                Use IDs <code>item-price-input</code> and
+                <code>item-image-url-input</code>.
+              </li>
+            </ul>
+          </li>
+          <li>Handle the button click.</li>
+          <li>
+            <strong>Using Handlebars</strong>, render a template with the values
+            input by the user. A single button click should add one new div to
+            the <code>#items</code> container, and that div should
+            contain a few additional elements.
+          </li>
+          <li>Clear the input fields.</li>
+        </ul>
+
+        <p>
+          We’re showing you how to use Handlebars because it’s a simple,
+          convenient way to render dynamic content, which you’ll likely need to
+          do in your high-fidelity team project prototype. There are other
+          options, though, especially if you want to create increasingly dynamic
+          applications (for which your team may choose to use a framework like
+          <a href="https://react.dev/">React</a>). When it comes time to
+          implement your application, talk with your team to decide what’s best
+          for your project.
+        </p>
+
+        <h3>Scoring (8+2 points)</h3>
+
+        <p>
+          <strong>Autograded:</strong>
+        </p>
+        <ul>
+          <li>3 points: New elements are correctly added using Handlebars.</li>
+          <li>
+            2 points: The `&lt;img&gt;` tag is added to the page
+            (conditionally).
+          </li>
+          <li>
+            2 points (extra credit): The shopping list items are remembered and
+            re-rendered onto the page on the page when the page is reloaded,
+            using `localStorage`.
+          </li>
+          <ul>
+            <li>
+              You should add a “Reset” or “Clear” button that deletes all
+              shopping list items from the page and from the `localStorage`
+              store. Give this button the `clear-button` ID.
+            </li>
+          </ul>
+        </ul>
+
+        <div class="admonition-info">
+          If you complete the extra credit, you’ll earn a 10/8 on this section,
+          which can serve as a buffer for other parts of your assignment grade.
+          The assignment as a whole will still be capped at 20/20 points.
+        </div>
+
+        <p>
+          <strong> Manually graded: </strong>
+        </p>
+        <ul>
+          <li>3 points: The page is aesthetically pleasing:</li>
+          <ul>
+            <li>
+              As in the first assignment, identify some
+              <strong>design goal</strong> for this page (no need to make it
+              match the functional purpose of the page).
+            </li>
+            <li>
+              You should update the appearance of the existing page, including
+              the text field and button.
+            </li>
+            <li>
+              The newly-added item should style the item title, price, and image
+              distinctly. Consider showing the name and price side-by-side,
+              using different font sizes for name and price, or other aesthetic
+              choices beyond simply rendering each piece of data plainly on the
+              page.
+            </li>
+            <li>
+              Consider ensuring that the image is rendered at a consistent size,
+              without stretching the aspect ratio, even if the input image url
+              is very large.
+            </li>
+            <li>
+              Justify three concrete choices you made that helped you achieve
+              your design goal. Insert this justification
+              <strong>visibly, in the page</strong> (e.g. at the bottom, in a
+              separate <code>&lt;div&gt;</code> tag).
+            </li>
+          </ul>
+        </ul>
+
+        <h3>Resources</h3>
+        <ul>
+          <li>
+            <a href="https://handlebarsjs.com/guide/"
+              >Introduction | Handlebars</a
+            >
+          </li>
+          <li>
+            <a
+              href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage"
+              >Window: localStorage property - Web APIs | MDN</a
+            >
+          </li>
+        </ul>
+      </section>
+    </main>
+  </body>
+</html>

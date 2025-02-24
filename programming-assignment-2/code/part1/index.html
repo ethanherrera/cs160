@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Part 1</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="main.css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+  </head>
+
+  <body>
+    <main>
+      <header>
+        <div>
+          <h1>Part 1</h1>
+        </div>
+        <div>
+          <button class="btn btn-light" id="reset-button">Reset</button>
+          <a href="../index.html" class="btn btn-light">Back</a>
+        </div>
+      </header>
+      <div class="shape-container">
+        <div class="circle purple"></div>
+        <div class="circle purple"></div>
+        <div class="circle purple"></div>
+        <div class="circle purple"></div>
+        <div class="circle purple"></div>
+        <div class="circle green"></div>
+        <div class="circle green"></div>
+        <div class="circle green"></div>
+        <div class="circle green"></div>
+        <div class="circle green"></div>
+        <div class="circle yellow border"></div>
+        <div class="circle yellow border"></div>
+        <div class="circle yellow"></div>
+        <div class="circle yellow"></div>
+        <div class="circle yellow"></div>
+        <div class="circle orange border"></div>
+        <div class="circle orange border"></div>
+        <div class="circle orange"></div>
+        <div class="circle orange"></div>
+        <div class="circle orange"></div>
+        <div class="circle blue"></div>
+        <div class="circle blue"></div>
+        <div class="circle blue border"></div>
+        <div class="circle blue border"></div>
+        <div class="circle blue"></div>
+        <div class="circle" id="gradient-circle"></div>
+      </div>
+    </main>
+
+    <script>
+      // This is the implementation for the "Reset" button:
+
+      function resetBubble(b) {
+        b.style.display = "block";
+      }
+
+      function resetAllBubbles() {
+        const allBubbles = document.querySelectorAll(".circle");
+        for (const bubble of allBubbles) {
+          resetBubble(bubble);
+        }
+      }
+
+      const resetButton = document.getElementById("reset-button");
+      resetButton.addEventListener("click", resetAllBubbles);
+
+      // Your solution here:
+
+      // Purple bubbles
+      const purpleBubbles = document.querySelectorAll(".circle.purple");
+      for (const bubble of purpleBubbles) {
+        bubble.addEventListener("click", () => {
+          for (const purpleBubble of purpleBubbles) {
+            purpleBubble.style.display = "none";
+          }
+        });
+      }
+
+      // Green bubbles
+      const greenBubbles = document.querySelectorAll(".circle.green");
+      const blueBubbles = document.querySelectorAll(".circle.blue");
+
+      for (const bubble of greenBubbles) {
+        bubble.addEventListener("click", () => {
+          for (const greenBubble of greenBubbles) {
+            greenBubble.style.display = "none";
+          }
+          for (const blueBubble of blueBubbles) {
+            blueBubble.style.display = "none";
+          }
+        });
+      }
+
+      // Orange bordered bubbles
+      const orangeBorderedBubbles = document.querySelectorAll(".circle.orange.border");
+      for (const bubble of orangeBorderedBubbles) {
+        bubble.addEventListener("click", (event) => {
+          event.currentTarget.style.display = "none";
+        });
+      }
+
+      // Gradient bubble
+      const gradientBubble = document.getElementById("gradient-circle");
+      gradientBubble.addEventListener("mouseenter", (event) => {
+        event.currentTarget.style.display = "none";
+      });
+    </script>
+  </body>
+</html>

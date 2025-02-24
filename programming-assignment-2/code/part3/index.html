@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Part 3</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" type="text/css" href="main.css" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta charset="utf-8" />
+
+    <!-- Load Handlebars! -->
+    <script src="handlebars.js"></script>
+  </head>
+
+  <body>
+    <header>
+      <div>
+        <h1>Shopping list</h1>
+      </div>
+    </header>
+    <main>
+      <div id="items" class="mb-3"></div>
+
+      <h2>Add a new item</h2>
+
+      <div id="new-item-section">
+        <label>
+          Item name
+          <input type="text" id="item-name-input" />
+        </label>
+        <button type="submit" id="add-item">Add item</button>
+      </div>
+
+      <div id="items"></div>
+    </main>
+
+    <!-- The browser won't show text in a script tag, and since we set -->
+    <!-- its `type` to something other than `text/javascript`, it also won't -->
+    <!-- try to execute this code as JavaScript. We can place our template code here, -->
+    <!-- then use `templateTextElement.innerHTML` to get the full template string -->
+    <!-- inside our JavaScript code. -->
+
+    <!-- Feel free to make more templates if you want! -->
+    <script id="template1" type="text/x-handlebars-template">
+      <div class="shopping-list-item"></div>
+    </script>
+
+    <script>
+      // You can write JavaScript here.
+
+      const templateTextElement = document.getElementById("template1");
+      // const template = ...;
+    </script>
+  </body>
+</html>

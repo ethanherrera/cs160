@@ -21,23 +21,29 @@
 
       .red {
         background-color: #dc3545;
+        flex: 1;
       }
 
       .blue {
         background-color: #007bff;
+        flex: 1;
       }
 
       .green {
         background-color: #28a745;
+        flex:1;
       }
 
       .yellow {
         background-color: #ffc107;
+        flex: 1;
+
       }
 
       .gray,
       .grey {
         background-color: #6c757d;
+        flex: 1;
       }
 
       main {
@@ -45,15 +51,35 @@
         height: 100vh;
 
         display: flex;
+        flex-direction: row;
         /* You may add additional code here, if you need. */
       }
 
+      .right {
+        display: flex;
+        flex-direction: column;
+        flex:1;
+      }
+
+        .left {
+            display: flex;
+            flex-direction: column;
+          flex:1;
+        }
       /* Add whatever CSS you need below to reference the elements you create in your HTML. */
     </style>
   </head>
   <body>
     <main>
-      <!-- Add the appropriate <div> elements here. -->
+      <div class="left">
+        <div class="red"></div>
+        <div class="blue"></div>
+      </div>
+        <div class="right">
+          <div class="green"></div>
+          <div class="yellow"></div>
+          <div class="gray"></div>
+        </div>
     </main>
   </body>
 </html>

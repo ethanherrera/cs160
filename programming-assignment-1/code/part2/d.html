@@ -21,10 +21,19 @@
 
       .red {
         background-color: #dc3545;
+        flex:1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
       }
 
       .blue {
         background-color: #007bff;
+        flex:2;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: space-evenly;
       }
 
       .green {
@@ -45,6 +54,7 @@
         height: 100vh;
 
         display: flex;
+        flex-direction: column;
         /* You may add additional code here, if you need. */
       }
 
@@ -62,12 +72,16 @@
   <body>
     <main>
       <!-- Add the appropriate <div> elements here. -->
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
-      <div class="circle"></div>
+      <div class="red">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+      </div>
+      <div class="blue">
+        <div class="circle"></div>
+        <div class="circle"></div>
+        <div class="circle"></div>
+        </div>
     </main>
   </body>
 </html>

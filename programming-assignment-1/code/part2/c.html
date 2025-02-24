@@ -21,18 +21,23 @@
 
       .red {
         background-color: #dc3545;
+        flex: 2;
       }
 
       .blue {
         background-color: #007bff;
+        flex: 2;
       }
 
       .green {
         background-color: #28a745;
+        flex: 1;
       }
 
       .yellow {
         background-color: #ffc107;
+        flex: 1;
+
       }
 
       .gray,
@@ -48,12 +53,31 @@
         /* You may add additional code here, if you need. */
       }
 
+      .left {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+      }
+
+        .right {
+            display: flex;
+            flex-direction: column;
+            flex:1;
+        }
+
       /* Add whatever CSS you need below to reference the elements you create in your HTML. */
     </style>
   </head>
   <body>
     <main>
-      <!-- Add the appropriate <div> elements here. -->
+      <div class="left">
+        <div class="red"></div>
+        <div class="green"></div>
+      </div>
+      <div class="right">
+        <div class="blue"></div>
+        <div class="yellow"></div>
+      </div>
     </main>
   </body>
 </html>
